@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addPlayerForm = document.getElementById('addPlayerForm');
     const formationSelector = document.getElementById('Formation');
     const playersContainer = document.querySelector('.backg');
+    const replacementDiv = document.querySelector('.replacement');
     let currentFormation = '4-3-3';
 
     const formationPositions = {
@@ -18,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'CB2': { gridRow: 5, gridColumn: 2 },
             'GK': { gridRow: 6, gridColumn: 3 }
         },
-
         '4-4-2': {
             'ST': { gridRow: 1, gridColumn: 4 },
             'LW': { gridRow: 1, gridColumn: 2 },
@@ -34,6 +34,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const formation = [];
+    const replacements = [];
+
+    function addPlayer(playerName, position) {
+        const player = { name: playerName, position: position };
+        const positionInFormation = formation.find(p => p.position === position);
+
+        if (!positionInFormation && formation.length < 11) {
+            
+            formation.push(player);
+        } else if (replacements.length < 6) {
+           
+            replacements.push(player);
+        } else {
+            console.log('Both formation and replacements are full. Cannot add more players.');
+        }
+
+        updateLists();
+    }
+
+    function updateLists() {
+        document.querySelectorAll('.maincont .player').forEach(player => {
+            player.querySelector('.details').textContent = ''; 
+        });
+        formation.forEach(player => {
+            const playerContainer = document.querySelector(`.maincont.${player.position}`);
+            const detailsDiv = playerContainer.querySelector('.details');
+            if (detailsDiv) detailsDiv.textContent = player.name;
+        });
+
+       
+        replacementDiv.innerHTML = '';
+        replacements.forEach(player => {
+            const replacementItem = document.createElement('div');
+            replacementItem.classList.add('replacement-item');
+            replacementItem.textContent = `${player.name} (${player.position})`;
+            replacementDiv.appendChild(replacementItem);
+        });
+
+        console.log("Formation:", formation);
+        console.log("Replacements:", replacements);
+    }
+
     function updateFormation(formation) {
         currentFormation = formation;
         const positions = formationPositions[formation];
@@ -44,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 playerContainer.style.gridRow = positions[position].gridRow;
                 playerContainer.style.gridColumn = positions[position].gridColumn;
             } else {
-                
                 playerContainer.style.gridRow = '';
                 playerContainer.style.gridColumn = '';
             }
@@ -58,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    
     updateFormation(currentFormation);
 
     function createPlayerCard({ position, name, image, flag, teamLogo, stats }) {
@@ -165,7 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Validate position against the current formation
         if (!(playerPosition in formationPositions[currentFormation])) {
             alert('Invalid position for the current formation.');
             return;
