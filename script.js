@@ -42,21 +42,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const positionInFormation = formation.find(p => p.position === position);
 
         if (!positionInFormation && formation.length < 11) {
-            
             formation.push(player);
+            console.log(formation);
+
+
         } else if (replacements.length < 6) {
-           
             replacements.push(player);
+            console.log(replacements);
+
         } else {
-            console.log('Both formation and replacements are full. Cannot add more players.');
+            alert('Both formation and replacements are full. Cannot add more players.');
+            return;
         }
 
-        updateLists();
+        const existingContainer = document.querySelector(`.maincont.${position}`);
+        console.log("inside qddPlqwer ", existingContainer);
+
+        const playerCard = createPlayerCard( position, name, image, flag, teamLogo, stats);
+
+        if (existingContainer) {
+            existingContainer.replaceWith(playerCard);
+        } else {
+            playersContainer.appendChild(playerCard);
+        }
     }
 
     function updateLists() {
         document.querySelectorAll('.maincont .player').forEach(player => {
-            player.querySelector('.details').textContent = ''; 
+            player.querySelector('.details').textContent = '';
         });
         formation.forEach(player => {
             const playerContainer = document.querySelector(`.maincont.${player.position}`);
@@ -64,11 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (detailsDiv) detailsDiv.textContent = player.name;
         });
 
-       
+
         replacementDiv.innerHTML = '';
         replacements.forEach(player => {
             const replacementItem = document.createElement('div');
-            replacementItem.classList.add('replacement-item');
+            replacementItem.classList.add('replacement');
             replacementItem.textContent = `${player.name} (${player.position})`;
             replacementDiv.appendChild(replacementItem);
         });
@@ -107,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (existingCard) {
             existingCard.remove();
         }
-       
+
 
         const playerContainer = document.createElement('div');
         playerContainer.classList.add('maincont', position);
@@ -169,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     playersContainer.addEventListener('click', (event) => {
         if (event.target.classList.contains('remove-icon')) {
-            
+
             const maincont = event.target.closest('.maincont');
             if (maincont) {
                 maincont.innerHTML = `
@@ -186,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-     addPlayerForm.addEventListener('submit', (event) => {
+    addPlayerForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
         const playerName = document.getElementById('playerName').value;
@@ -200,6 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const dribbling = document.getElementById('Dribbling').value;
         const defending = document.getElementById('Defending').value;
         const physical = document.getElementById('Physical').value;
+
+        console.log(playerPosition);
 
         if (!playerName || !playerPosition || !playerImage || !flagImage || !teamLogo) {
             alert("All fields must be filled out.");
@@ -220,16 +235,25 @@ document.addEventListener('DOMContentLoaded', () => {
             stats: { pace, shooting, passing, dribbling, defending, physical }
         });
 
-        
-        const existingContainer = document.querySelector(`.maincont.${playerPosition}`);
+        console.log(playerCard);
+
+
+
+
+console.log(playerPosition)
+
+        const existingContainer = document.querySelector(`.maincont ${playerPosition}$`);
+        console.log(existingContainer);
+
         if (existingContainer) {
+  
             existingContainer.replaceWith(playerCard);
         } else {
             playersContainer.appendChild(playerCard);
         }
+        addPlayer(playerName, playerPosition);
 
         addPlayerForm.reset();
     });
 });
 
-    
