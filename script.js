@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    
     const addPlayerForm = document.getElementById('addPlayerForm');
     const formationSelector = document.getElementById('Formation');
     const playersContainer = document.querySelector('.backg');
@@ -33,63 +34,170 @@ document.addEventListener('DOMContentLoaded', () => {
             'GK': { gridRow: 6, gridColumn: 3 }
         }
     };
+    
 
     const formation = [];
     const replacements = [];
 
-    function addPlayer(playerName, position) {
-        const player = { name: playerName, position: position };
-        const positionInFormation = formation.find(p => p.position === position);
+    function addPlayer({ position: playerPosition, name: playerName, image: playerImage, flag: flagImage, teamLogo }) {
+        const player = { position: playerPosition, name: playerName, image: playerImage, flag: flagImage, teamLogo };
+        const positionInFormation = formation.find(p => p.position === playerPosition);
 
         if (!positionInFormation && formation.length < 11) {
             formation.push(player);
-            console.log(formation);
-
+            return true;
 
         } else if (replacements.length < 6) {
             replacements.push(player);
-            console.log(replacements);
+            console.log("ramplacment : ", replacements);
+            return false;
 
         } else {
             alert('Both formation and replacements are full. Cannot add more players.');
             return;
         }
 
-        const existingContainer = document.querySelector(`.maincont.${position}`);
-        console.log("inside qddPlqwer ", existingContainer);
 
-        const playerCard = createPlayerCard( position, name, image, flag, teamLogo, stats);
 
-        if (existingContainer) {
-            existingContainer.replaceWith(playerCard);
-        } else {
-            playersContainer.appendChild(playerCard);
+    }
+    function enableDragAndDrop() {
+        const draggables = document.querySelectorAll('.player');
+        const droppables = document.querySelectorAll('.maincont'); 
+    
+        draggables.forEach(draggable => {
+            draggable.setAttribute('draggable', true);
+    
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('dragged-id', draggable.closest('.maincont').dataset.position);
+                draggable.classList.add('dragging');
+            });
+    
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
+            });
+        });
+    
+        droppables.forEach(droppable => {
+            droppable.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                droppable.classList.add('drag-over');
+            });
+    
+            droppable.addEventListener('dragleave', () => {
+                droppable.classList.remove('drag-over');
+            });
+    
+            droppable.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const draggedPosition = e.dataTransfer.getData('dragged-id');
+                const targetPosition = droppable.dataset.position;
+    
+                if (draggedPosition && targetPosition) {
+                    swapPlayers(draggedPosition, targetPosition);
+                }
+    
+                droppable.classList.remove('drag-over');
+            });
+        });
+    }
+    
+    function swapPlayers(position1, position2) {
+        const position1Container = document.querySelector(`.maincont[data-position="${position1}"]`);
+        const position2Container = document.querySelector(`.maincont[data-position="${position2}"]`);
+    
+        if (position1Container && position2Container) {
+            const player1 = position1Container.querySelector('.player');
+            const player2 = position2Container.querySelector('.player');
+    
+           
+            position1Container.innerHTML = '';
+            position2Container.innerHTML = '';
+    
+            if (player1) position2Container.appendChild(player1);
+            if (player2) position1Container.appendChild(player2);
+    
+           
+            const player1Index = formation.findIndex(player => player.position === position1);
+            const player2Index = formation.findIndex(player => player.position === position2);
+    
+            if (player1Index !== -1 && player2Index !== -1) {
+                [formation[player1Index], formation[player2Index]] = [formation[player2Index], formation[player1Index]];
+            }
+    
+            console.log("Updated Formation:", formation);
         }
     }
-
-    function updateLists() {
-        document.querySelectorAll('.maincont .player').forEach(player => {
-            player.querySelector('.details').textContent = '';
-        });
-        formation.forEach(player => {
-            const playerContainer = document.querySelector(`.maincont.${player.position}`);
-            const detailsDiv = playerContainer.querySelector('.details');
-            if (detailsDiv) detailsDiv.textContent = player.name;
-        });
+    
+    
 
 
-        replacementDiv.innerHTML = '';
+    function updateLists({ stats }) {
+        const all = document.querySelector(".replacement");
+        console.log(all);
         replacements.forEach(player => {
-            const replacementItem = document.createElement('div');
-            replacementItem.classList.add('replacement');
-            replacementItem.textContent = `${player.name} (${player.position})`;
-            replacementDiv.appendChild(replacementItem);
+            const playerContainers = document.createElement('div');
+            playerContainers.classList.add('maincont');
+            playerContainers.setAttribute('data-position', player.position);
+            const playerCard = document.createElement('div');
+            playerCard.classList.add('player');
+
+            const playerPosition = document.createElement('p');
+            playerPosition.classList.add('player-position');
+            playerPosition.textContent = player.position;
+
+            const playerImage = document.createElement('img');
+            playerImage.classList.add('player-image');
+            console.log(player);
+            playerImage.src = player.image || 'images/placeholder-player.png';
+            playerImage.alt = player.name || player.position;
+
+            const playerName = document.createElement('p');
+            playerName.classList.add('player-name');
+            playerName.textContent = player.name || 'Unknown Player';
+
+            const detailsDiv = document.createElement('div');
+            detailsDiv.classList.add('details');
+
+            const flagImage = document.createElement('img');
+            flagImage.classList.add('flag');
+            flagImage.src = player.flag || 'images/default-flag.png';
+            flagImage.alt = 'Flag';
+
+            const teamLogoImg = document.createElement('img');
+            teamLogoImg.classList.add('logo');
+            teamLogoImg.src = player.teamLogo || 'images/default-logo.png';
+            teamLogoImg.alt = 'Team Logo';
+
+            detailsDiv.appendChild(flagImage);
+            detailsDiv.appendChild(teamLogoImg);
+
+            playerCard.appendChild(playerPosition);
+            playerCard.appendChild(playerImage);
+            playerCard.appendChild(playerName);
+            playerCard.appendChild(detailsDiv);
+            playerContainers.appendChild(playerCard);
+
+            const statsDiv = document.createElement('div');
+            statsDiv.classList.add('player', 'back');
+            statsDiv.innerHTML = `
+            <button class="remove-icon">❌</button>
+            <p>PAC: ${stats.pace}</p>
+            <p>SHO: ${stats.shooting}</p>
+            <p>PAS: ${stats.passing}</p>
+            <p>DRI: ${stats.dribbling}</p>
+            <p>DEF: ${stats.defending}</p>
+            <p>PHY: ${stats.physical}</p>
+        `;
+            playerContainers.appendChild(statsDiv);
+            all.appendChild(playerContainers);
         });
 
+        enableDragAndDrop();
         console.log("Formation:", formation);
         console.log("Replacements:", replacements);
     }
 
+    
     function updateFormation(formation) {
         currentFormation = formation;
         const positions = formationPositions[formation];
@@ -214,7 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const defending = document.getElementById('Defending').value;
         const physical = document.getElementById('Physical').value;
 
-        console.log(playerPosition);
 
         if (!playerName || !playerPosition || !playerImage || !flagImage || !teamLogo) {
             alert("All fields must be filled out.");
@@ -226,34 +333,44 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const playerCard = createPlayerCard({
+        if (addPlayer({
             position: playerPosition,
             name: playerName,
             image: playerImage,
             flag: flagImage,
-            teamLogo,
-            stats: { pace, shooting, passing, dribbling, defending, physical }
-        });
+            teamLogo
+        }) === true) {
+            const playerCard = createPlayerCard({
+                position: playerPosition,
+                name: playerName,
+                image: playerImage,
+                flag: flagImage,
+                teamLogo,
+                stats: { pace, shooting, passing, dribbling, defending, physical }
+            });
 
-        console.log(playerCard);
+            console.log(playerCard);
 
 
 
 
-console.log(playerPosition)
 
-        const existingContainer = document.querySelector(`.maincont ${playerPosition}$`);
-        console.log(existingContainer);
+            const existingContainer = document.querySelector(`.maincont.${playerPosition}`);
 
-        if (existingContainer) {
-  
-            existingContainer.replaceWith(playerCard);
+            if (existingContainer) {
+                console.log(1);
+
+                existingContainer.replaceWith(playerCard);
+            } else {
+                playersContainer.appendChild(playerCard);
+            }
         } else {
-            playersContainer.appendChild(playerCard);
+            updateLists({ stats: { pace, shooting, passing, dribbling, defending, physical } });
         }
-        addPlayer(playerName, playerPosition);
+
 
         addPlayerForm.reset();
+        enableDragAndDrop();
     });
 });
 

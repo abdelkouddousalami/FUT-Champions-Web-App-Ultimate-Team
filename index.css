@@ -280,6 +280,16 @@ form button:hover {
 .player.back {
     transform: rotateY(180deg);
 }
+.dragging {
+    opacity: 0.5;
+    transform: scale(1.1);
+}
+
+.dragover {
+    border: 2px dashed #00f;
+    background-color: rgba(0, 0, 255, 0.1);
+}
+
 .ST { 
     grid-row: 1;
      grid-column: 3;
