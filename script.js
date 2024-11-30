@@ -35,40 +35,128 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
+    const playerPositionInput = document.getElementById('playerPosition');
+    const statsContainer = document.createElement('div');
+    statsContainer.id = 'statsContainer';
+    const form = document.getElementById('addPlayerForm');
+    form.insertBefore(statsContainer, document.querySelector('#btn'));
+    function updateStatsFields(position) {
+        statsContainer.innerHTML = '';
 
+        if (position.toUpperCase() === 'GK') {
+            statsContainer.innerHTML = `
+            
+            <form id="addPlayerForm">
+                <input type="number" id="Pace" placeholder="Diving" required>
+                <input type="number" id="Shooting" placeholder="Handling" required>
+                <input type="number" id="Passing" placeholder="Kicking" required>
+                <input type="number" id="Dribbling" placeholder="Reflexes" required>
+                <input type="number" id="Defending" placeholder="Speed" required>
+                <input type="number" id="Physical" placeholder="Positioning" required>
+            </form>
+            `;
+        } else {
+            statsContainer.innerHTML = `
+            <form id="addPlayerForm">
+                <input type="number" id="Pace" placeholder="Pace" required>
+                <input type="number" id="Shooting" placeholder="Shooting" required>
+                <input type="number" id="Passing" placeholder="Passing" required>
+                <input type="number" id="Dribbling" placeholder="Dribbling" required>
+                <input type="number" id="Defending" placeholder="Defending" required>
+                <input type="number" id="Physical" placeholder="Physical" required>
+            </form>
+            `;
+        }
+    }
+    playerPositionInput.addEventListener('input', (e) => {
+        const position = e.target.value.trim();
+        updateStatsFields(position);
+    });
+    updateStatsFields('ST');
+
+    function showEditForm(playerDiv) {
+        const statsContainer = document.getElementById('back');
+        const position = playerDiv.stats.position;
+        statsContainer.innerHTML = '';
+
+        const form = document.createElement('form');
+        form.id = 'editPlayerForm';
+        
+        const stats = ['Pace', 'Shooting', 'Passing', 'Dribbling', 'Defending', 'Physical'];
+        stats.forEach(stat => {
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.id = stat;
+            input.placeholder = stat;
+            input.required = true;
+            form.appendChild(input);
+        });
+
+        const saveButton = document.createElement('button');
+        saveButton.type = 'submit';
+        saveButton.textContent = 'Save';
+        form.appendChild(saveButton);
+
+        statsContainer.appendChild(form);
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const updatedStats = {};
+            stats.forEach(stat => {
+                updatedStats[stat] = form.querySelector(`#${stat}`).value;
+            });
+
+            playerDiv.querySelector('.details').textContent = JSON.stringify(updatedStats);
+
+            statsContainer.innerHTML = '';
+        });
+    }
+
+    const editButtons = document.querySelectorAll('.edit-icon');
+    editButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const playerDiv = e.target.closest('.player');
+            showEditForm(playerDiv);
+        });
+    });
+
+
+    
     const formation = [];
     const replacements = [];
 
-    function addPlayer({ position: playerPosition, name: playerName, image: playerImage, flag: flagImage, teamLogo }) {
-        const player = { position: playerPosition, name: playerName, image: playerImage, flag: flagImage, teamLogo };
+    function addPlayer({ position: playerPosition, name: playerName, image: playerImage, flag: flagImage, teamLogo, stats }) {
+        const player = { 
+            position: playerPosition, 
+            name: playerName, 
+            image: playerImage, 
+            flag: flagImage, 
+            teamLogo, 
+            stats 
+        };
         const positionInFormation = formation.find(p => p.position === playerPosition);
-
+    
         if (!positionInFormation && formation.length < 11) {
             formation.push(player);
             return true;
-
         } else if (replacements.length < 6) {
             replacements.push(player);
-            console.log("ramplacment : ", replacements);
             return false;
-
         } else {
             alert('Both formation and replacements are full. Cannot add more players.');
             return;
         }
-
-
-
     }
+    
     function enableDragAndDrop() {
         const draggables = document.querySelectorAll('.player');
-        const droppables = document.querySelectorAll('.maincont'); 
+        const droppables = document.querySelectorAll('.maincont');
     
         draggables.forEach(draggable => {
             draggable.setAttribute('draggable', true);
     
             draggable.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('dragged-id', draggable.closest('.maincont').dataset.position);
+                e.dataTransfer.setData('dragged-position', draggable.closest('.maincont').dataset.position);
                 draggable.classList.add('dragging');
             });
     
@@ -89,10 +177,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
             droppable.addEventListener('drop', (e) => {
                 e.preventDefault();
-                const draggedPosition = e.dataTransfer.getData('dragged-id');
+                const draggedPosition = e.dataTransfer.getData('dragged-position');
                 const targetPosition = droppable.dataset.position;
     
-                if (draggedPosition && targetPosition) {
+                if (draggedPosition && targetPosition && draggedPosition !== targetPosition) {
                     swapPlayers(draggedPosition, targetPosition);
                 }
     
@@ -102,42 +190,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function swapPlayers(position1, position2) {
-        const position1Container = document.querySelector(`.maincont[data-position="${position1}"]`);
-        const position2Container = document.querySelector(`.maincont[data-position="${position2}"]`);
+        const container1 = document.querySelector(`.maincont[data-position="${position1}"]`);
+        const container2 = document.querySelector(`.maincont[data-position="${position2}"]`);
     
-        if (position1Container && position2Container) {
-            const player1 = position1Container.querySelector('.player');
-            const player2 = position2Container.querySelector('.player');
+        if (container1 && container2) {
+            const player1 = container1.querySelector('.player');
+            const player2 = container2.querySelector('.player');
     
-           
-            position1Container.innerHTML = '';
-            position2Container.innerHTML = '';
+            
+            container1.innerHTML = `${container2}`;
+            container2.innerHTML = `${container1}`;
     
-            if (player1) position2Container.appendChild(player1);
-            if (player2) position1Container.appendChild(player2);
+            if (player1) container2.appendChild(player1);
+            if (player2) container1.appendChild(player2);
     
-           
-            const player1Index = formation.findIndex(player => player.position === position1);
-            const player2Index = formation.findIndex(player => player.position === position2);
+
+            const index1 = formation.findIndex(player => player.position === position1);
+            const index2 = formation.findIndex(player => player.position === position2);
     
-            if (player1Index !== -1 && player2Index !== -1) {
-                [formation[player1Index], formation[player2Index]] = [formation[player2Index], formation[player1Index]];
+            if (index1 !== -1 && index2 !== -1) {
+                [formation[index1], formation[index2]] = [formation[index2], formation[index1]];
+            } else if (index1 !== -1) {
+                formation[index1].position = position2;
+            } else if (index2 !== -1) {
+                formation[index2].position = position1;
             }
     
-            console.log("Updated Formation:", formation);
+
         }
     }
-    
-    
-
-
     function updateLists({ stats }) {
         const all = document.querySelector(".replacement");
-        console.log(all);
         replacements.forEach(player => {
             const playerContainers = document.createElement('div');
             playerContainers.classList.add('maincont');
-            playerContainers.setAttribute('data-position', player.position);
+
             const playerCard = document.createElement('div');
             playerCard.classList.add('player');
 
@@ -147,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const playerImage = document.createElement('img');
             playerImage.classList.add('player-image');
-            console.log(player);
             playerImage.src = player.image || 'images/placeholder-player.png';
             playerImage.alt = player.name || player.position;
 
@@ -181,6 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statsDiv.classList.add('player', 'back');
             statsDiv.innerHTML = `
             <button class="remove-icon">❌</button>
+            <p class = "rat">${stats.rating}</p>
             <p>PAC: ${stats.pace}</p>
             <p>SHO: ${stats.shooting}</p>
             <p>PAS: ${stats.passing}</p>
@@ -192,10 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
             all.appendChild(playerContainers);
         });
 
-        enableDragAndDrop();
-        console.log("Formation:", formation);
-        console.log("Replacements:", replacements);
     }
+    
 
     
     function updateFormation(formation) {
@@ -239,6 +324,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const playerPosition = document.createElement('p');
         playerPosition.classList.add('player-position');
         playerPosition.textContent = position;
+        const rating = document.createElement('p');
+        rating.classList.add('rtn');
+        rating.textContent = rating;
 
         const playerImage = document.createElement('img');
         playerImage.classList.add('player-image');
@@ -274,6 +362,8 @@ document.addEventListener('DOMContentLoaded', () => {
         statsDiv.classList.add('player', position, 'back');
         statsDiv.innerHTML = `
             <button class="remove-icon">❌</button>
+            <button class="edit-icon">✏️</button>
+            <p class = "rat">${stats.rating}</p>
             <p>PAC: ${stats.pace}</p>
             <p>SHO: ${stats.shooting}</p>
             <p>PAS: ${stats.passing}</p>
@@ -315,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const playerImage = document.getElementById('playerImage').value;
         const flagImage = document.getElementById('flagImage').value;
         const teamLogo = document.getElementById('teamLogo').value;
+        const rating = document.getElementById('Rating').value;
         const pace = document.getElementById('Pace').value;
         const shooting = document.getElementById('Shooting').value;
         const passing = document.getElementById('Passing').value;
@@ -336,6 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (addPlayer({
             position: playerPosition,
             name: playerName,
+            rating: rating,
             image: playerImage,
             flag: flagImage,
             teamLogo
@@ -343,23 +435,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const playerCard = createPlayerCard({
                 position: playerPosition,
                 name: playerName,
+                rating: rating,
                 image: playerImage,
                 flag: flagImage,
                 teamLogo,
-                stats: { pace, shooting, passing, dribbling, defending, physical }
+                stats: { rating, pace, shooting, passing, dribbling, defending, physical }
             });
-
-            console.log(playerCard);
-
-
-
-
 
             const existingContainer = document.querySelector(`.maincont.${playerPosition}`);
 
             if (existingContainer) {
-                console.log(1);
-
                 existingContainer.replaceWith(playerCard);
             } else {
                 playersContainer.appendChild(playerCard);
@@ -367,8 +452,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             updateLists({ stats: { pace, shooting, passing, dribbling, defending, physical } });
         }
-
-
         addPlayerForm.reset();
         enableDragAndDrop();
     });

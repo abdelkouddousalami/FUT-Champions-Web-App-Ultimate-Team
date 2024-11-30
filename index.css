@@ -4,7 +4,61 @@
     box-sizing: border-box;
 }
 
-body {
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    color: white;
+}
+
+.nav-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #f0f0f0;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 12px;
+    border: none;
+    background-color: #555;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #777;
+}
+
+main {
     display: flex;
     height: 100vh;
     font-family: Arial, sans-serif;
@@ -25,6 +79,7 @@ body {
     justify-items: center;
 
 }
+
 .formation-selector {
     text-align: center;
     margin: 20px;
@@ -33,32 +88,33 @@ body {
     max-width: 300px;
     margin: 30px auto;
 }
+
 .formation-selector select {
     padding: 8px 12px;
     font-size: 1rem;
     border-radius: 5px;
     border: 2px solid #333;
-    background: rgb(0,255,8);
-    background: linear-gradient(173deg, rgba(0,255,8,1) 30%, rgba(255,255,255,1) 57%);
+    background: rgb(0, 255, 8);
+    background: linear-gradient(173deg, rgba(0, 255, 8, 1) 30%, rgba(255, 255, 255, 1) 57%);
     color: #000000;
     appearance: none;
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
-  }
+}
 
-  .formation-selector select:hover {
+.formation-selector select:hover {
     border-color: #00ff15;
     box-shadow: 0 0 5px rgba(16, 231, 1, 0.5);
-  }
+}
 
-  .formation-selector select:focus {
+.formation-selector select:focus {
     border-color: #07ff07;
     box-shadow: 0 0 8px rgba(9, 255, 42, 0.6);
-  }
+}
 
-  .formation-selector option {
+.formation-selector option {
     background-color: #ffffff;
-  }
+}
 
 .dropdown {
     position: relative;
@@ -120,11 +176,12 @@ body {
     flex-wrap: wrap;
     justify-content: space-evenly;
     align-items: center;
-    background: rgb(29,221,45);
-    background: linear-gradient(180deg, rgba(29,221,45,1) 8%, rgba(44,232,55,1) 21%, rgba(58,242,64,1) 32%, rgba(78,255,77,1) 58%, rgba(255,255,255,1) 100%);
+    background: rgb(29, 221, 45);
+    background: linear-gradient(180deg, rgba(29, 221, 45, 1) 8%, rgba(44, 232, 55, 1) 21%, rgba(58, 242, 64, 1) 32%, rgba(78, 255, 77, 1) 58%, rgba(255, 255, 255, 1) 100%);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     overflow-y: auto;
 }
+
 #btn {
     padding: 10px 20px;
     background-color: #4caf50;
@@ -136,12 +193,12 @@ body {
     cursor: pointer;
     text-transform: uppercase;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: inline-block;
 }
 
 #btn:hover {
-    background-color: #388e3c; 
+    background-color: #388e3c;
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
@@ -159,7 +216,8 @@ form {
     width: 45%;
 }
 
-form input, form button {
+form input,
+form button {
     padding: 10px;
     font-size: 14px;
     border-radius: 3px;
@@ -196,7 +254,7 @@ form button:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: bold;
     text-align: center;
     background-image: url('images/badge_total_rush.png');
@@ -211,9 +269,20 @@ form button:hover {
 }
 
 .remove-icon {
-    position: absolute; 
+    position: absolute;
     top: -10px;
     right: -10px;
+    background: none;
+    border: none;
+    color: red;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.edit-icon {
+    position: absolute;
+    top: -10px;
+    right: 90px;
     background: none;
     border: none;
     color: red;
@@ -225,7 +294,12 @@ form button:hover {
 .player-position {
     font-size: 14px;
     color: #ffffff;
-    
+
+}
+
+.rat {
+    font-size: 18px;
+    color: gold;
 }
 
 .player-image {
@@ -235,9 +309,9 @@ form button:hover {
 
 .player-name {
     color: white;
-    font-size: 12px;
+    width: 100%;
+    font-size: 10px;
     font-weight: bold;
-    margin: 2px 0;
 }
 
 .details {
@@ -247,11 +321,13 @@ form button:hover {
     width: 100%;
 }
 
-.flag, .logo {
+.flag,
+.logo {
     width: 15px;
     height: 15px;
     object-fit: contain;
 }
+
 .maincont:hover .player {
     transform: rotateY(180deg);
 }
@@ -274,12 +350,14 @@ form button:hover {
     justify-content: center;
     border-radius: 10px;
     padding: 15px;
-    background: rgba(0, 0, 0, 0.8); 
+    background: rgba(0, 0, 0, 0.8);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
+
 .player.back {
     transform: rotateY(180deg);
 }
+
 .dragging {
     opacity: 0.5;
     transform: scale(1.1);
@@ -290,47 +368,186 @@ form button:hover {
     background-color: rgba(0, 0, 255, 0.1);
 }
 
-.ST { 
+.ST {
     grid-row: 1;
-     grid-column: 3;
-     }
+    grid-column: 3;
+}
+
 .LW {
-     grid-row: 2;
-      grid-column: 1;
-     }
+    grid-row: 2;
+    grid-column: 1;
+}
+
 .RW {
-     grid-row: 2;
-      grid-column: 5;
-     }
+    grid-row: 2;
+    grid-column: 5;
+}
+
 .CM1 {
-     grid-row: 3;
-      grid-column: 4;
-     }
+    grid-row: 3;
+    grid-column: 4;
+}
+
 .CM2 {
-     grid-row: 3;
-      grid-column: 2;
-     }
+    grid-row: 3;
+    grid-column: 2;
+}
+
 .CDM {
-     grid-row: 4;
-      grid-column: 3;
-     }
+    grid-row: 4;
+    grid-column: 3;
+}
+
 .LB {
-     grid-row: 5;
-      grid-column: 1;
-     }
+    grid-row: 5;
+    grid-column: 1;
+}
+
 .RB {
-     grid-row: 5;
-      grid-column: 5;
-     }
+    grid-row: 5;
+    grid-column: 5;
+}
+
 .CB1 {
-     grid-row: 5;
-      grid-column: 4;
-     }
+    grid-row: 5;
+    grid-column: 4;
+}
+
 .CB2 {
-     grid-row: 5;
-      grid-column: 2;
-     }
+    grid-row: 5;
+    grid-column: 2;
+}
+
 .GK {
-     grid-row: 6;
-      grid-column: 3;
-     }
+    grid-row: 6;
+    grid-column: 3;
+}
+
+
+@media screen and (max-width: 1024px) {
+    .navbar {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .nav-buttons {
+        margin-top: 15px;
+        gap: 5px;
+    }
+
+    .backg {
+        height: 100vh;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+
+    .team {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+}
+@media screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .nav-logo {
+        font-size: 1.2rem;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-buttons {
+        gap: 5px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+
+    .backg {
+        height: 100vh;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .team {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .formation-selector {
+        max-width: 100%;
+        margin: 20px auto;
+    }
+
+    .maincont {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+@media only screen and (max-width: 480px) {
+    .navbar {
+        padding: 10px 5px;
+    }
+
+    .nav-logo {
+        font-size: 1.2rem;
+    }
+
+    .nav-links a {
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+    .backg {
+        height: 100vh;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .formation-selector select {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+
+    .team {
+        width: 100%;
+        padding: 10px;
+        box-shadow: none;
+    }
+}
