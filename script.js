@@ -33,7 +33,6 @@ const formationPositions = {
         'GK': { gridRow: 6, gridColumn: 3 }
     }
 };
-
 const playerPositionInput = document.getElementById('playerPosition');
 const statsContainer = document.createElement('div');
 statsContainer.id = 'statsContainer';
@@ -113,9 +112,6 @@ function showEditForm(playerDiv) {
             let x = document.querySelector('.editPlayerForm')
             x.style.display = 'none';
         });
-        
-
-        
 
         playerDiv.parentNode.querySelector('.player.back').innerHTML = `
             <button class="remove-icon">❌</button>
@@ -127,13 +123,8 @@ function showEditForm(playerDiv) {
             <p class="defen">DEF: ${updatedStats.Defending}</p>
             <p class="phys">PHY: ${updatedStats.Physical}</p>
         `;
-
-       
     });
 }
-
-
-
 const formation = [];
 const replacements = [];
 
@@ -157,78 +148,6 @@ function addPlayer({ position: playerPosition, name: playerName, image: playerIm
     } else {
         alert('Both formation and replacements are full. Cannot add more players.');
         return;
-    }
-}
-
-function enableDragAndDrop() {
-    const draggables = document.querySelectorAll('.player');
-    const droppables = document.querySelectorAll('.maincont');
-
-    draggables.forEach(draggable => {
-        draggable.setAttribute('draggable', true);
-
-        draggable.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('dragged-position', draggable.closest('.maincont').dataset.position);
-            draggable.classList.add('dragging');
-        });
-
-        draggable.addEventListener('dragend', () => {
-            draggable.classList.remove('dragging');
-        });
-    });
-
-    droppables.forEach(droppable => {
-        droppable.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            droppable.classList.add('drag-over');
-        });
-
-        droppable.addEventListener('dragleave', () => {
-            droppable.classList.remove('drag-over');
-        });
-
-        droppable.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const draggedPosition = e.dataTransfer.getData('dragged-position');
-            const targetPosition = droppable.dataset.position;
-
-            if (draggedPosition && targetPosition && draggedPosition !== targetPosition) {
-                swapPlayers(draggedPosition, targetPosition);
-            }
-
-            droppable.classList.remove('drag-over');
-        });
-    });
-}
-
-function swapPlayers(position1, position2) {
-    const container1 = document.querySelector(`.maincont[data-position="${position1}"]`);
-    const container2 = document.querySelector(`.maincont[data-position="${position2}"]`);
-
-    if (container1 && container2) {
-        const player1 = container1.querySelector('.player');
-        const player2 = container2.querySelector('.player');
-
-
-        container1.innerHTML = `${container2}`;
-        container2.innerHTML = `${container1}`;
-
-        if (player1) container2.appendChild(player1);
-        if (player2) container1.appendChild(player2);
-
-
-        const index1 = formation.findIndex(player => player.position === position1);
-        const index2 = formation.findIndex(player => player.position === position2);
-
-        if (index1 !== -1 && index2 !== -1) {
-            [formation[index1], formation[index2]] = [formation[index2], formation[index1]];
-        } else if (index1 !== -1) {
-            formation[index1].position = position2;
-        } else if (index2 !== -1) {
-            formation[index2].position = position1;
-        }
-
-
     }
 }
 function updateLists({ stats }) {
@@ -292,8 +211,6 @@ function updateLists({ stats }) {
     });
 
 }
-
-
 
 function updateFormation(formation) {
     currentFormation = formation;
@@ -388,6 +305,7 @@ function createPlayerCard({ position, name, image, flag, teamLogo, stats }) {
     playerContainer.appendChild(statsDiv);
 
     return playerContainer;
+
 }
 
 playersContainer.addEventListener('click', (event) => {
@@ -475,5 +393,4 @@ addPlayerForm.addEventListener('submit', (event) => {
         });
     });
 
-    enableDragAndDrop();
 });
